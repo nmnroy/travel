@@ -129,7 +129,7 @@ const Home = () => {
             </section>
 
             {/* Integrated Itinerary Builder */}
-            <section className="bg-slate-50 py-20 border-t border-slate-200">
+            <section id="itinerary" className="bg-slate-50 py-20 border-t border-slate-200">
                 <div className="container mx-auto px-4">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl font-bold text-slate-900 mb-4">Your Perfect Itinerary</h2>
