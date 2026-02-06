@@ -29,20 +29,31 @@ export const VoiceSearch = () => {
         setQuery(localQuery);
     }, [localQuery, setQuery]);
 
+    const handleSearch = () => {
+        if (localQuery.trim()) {
+            setQuery(localQuery);
+            navigate('/search');
+        }
+    };
+
     return (
         <div className="relative w-full max-w-2xl mx-auto">
             <div className="relative flex items-center bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200 transition-all focus-within:ring-4 focus-within:ring-brand-100 focus-within:border-brand-300">
 
-                {/* Search Icon */}
-                <div className="pl-6 pr-4 text-slate-400">
+                {/* Search Button */}
+                <button
+                    onClick={handleSearch}
+                    className="pl-6 pr-4 text-slate-400 hover:text-brand-600 transition-colors"
+                >
                     <Search size={24} />
-                </div>
+                </button>
 
                 {/* Input Field */}
                 <input
                     type="text"
                     value={localQuery}
                     onChange={(e) => setLocalQuery(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                     placeholder="Where do you want to go? (e.g., 'Bali weekend trip')"
                     className="w-full py-6 text-lg text-slate-900 placeholder:text-slate-400 outline-none font-medium"
                 />
