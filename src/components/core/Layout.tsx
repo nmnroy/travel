@@ -18,7 +18,7 @@ export const Layout = ({ children, showSearch = true }: LayoutProps) => {
                             <Plane size={20} />
                         </div>
                         <span className="text-xl font-bold tracking-tight text-slate-900 hidden sm:block">
-                            Travel<span className="text-brand-600">Pro</span>
+                            <span className="text-brand-600">Experio</span>
                         </span>
                     </Link>
 
@@ -55,7 +55,7 @@ export const Layout = ({ children, showSearch = true }: LayoutProps) => {
             {/* Footer (Simplified) */}
             <footer className="bg-white border-t border-slate-200 py-8 mt-20">
                 <div className="container mx-auto px-4 text-center text-slate-500 text-sm">
-                    © {new Date().getFullYear()} Travel Pro. All rights reserved.
+                    © {new Date().getFullYear()} Experio. All rights reserved.
                 </div>
             </footer>
         </div>
