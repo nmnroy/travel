@@ -134,5 +134,41 @@ export const mockApi = {
             { id: 'c2', type: 'cab', vehicleType: 'SUV', price: 65, duration: '45m' },
             { id: 's1', type: 'shuttle', vehicleType: 'Shared Van', price: 15, duration: '1h 10m' },
         ];
+    },
+
+    getEvents: async (_locationId: string) => {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return [
+            {
+                id: 'e1',
+                name: 'Bali Kite Festival',
+                description: 'Annual international kite festival in Padang Galak area, Sanur Beach.',
+                date: 'July - October',
+                type: 'festival',
+                image: 'https://images.unsplash.com/photo-1598324789736-4861f89564a0?auto=format&fit=crop&w=800&q=80',
+                locationId: 'bali',
+                impactScore: 7
+            },
+            {
+                id: 'e2',
+                name: 'Beach Cleanup Drive',
+                description: 'Join local community heroes in keeping Kuta beach clean and plastic-free.',
+                date: 'Every Saturday',
+                type: 'volunteering',
+                image: 'https://images.unsplash.com/photo-1618477461853-5f8dd68aa395?auto=format&fit=crop&w=800&q=80',
+                locationId: 'bali',
+                impactScore: 10
+            },
+            {
+                id: 'e3',
+                name: 'Traditional Batik Workshop',
+                description: 'Learn the ancient art of Batik making from local artisans in Ubud.',
+                date: 'Daily',
+                type: 'workshop',
+                image: 'https://images.unsplash.com/photo-1606293926075-69a00dbfde81?auto=format&fit=crop&w=800&q=80',
+                locationId: 'bali',
+                impactScore: 8
+            }
+        ];
     }
 };

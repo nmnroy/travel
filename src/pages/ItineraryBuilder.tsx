@@ -4,6 +4,7 @@ import { Calendar, Plus, ChevronRight, Utensils, Users, User, Heart, Baby, Car, 
 import { useTripStore } from '../store/useTripStore';
 import { DiscoveryPersonalization } from '../services/discoveryPersonalization';
 import { ProximityService } from '../services/proximityService';
+import CulturalDiscovery from '../components/core/CulturalDiscovery';
 import type { GroupType, Activity } from '../types';
 
 const DAY_SCHEDULES: Record<number, Activity[]> = {
@@ -379,6 +380,9 @@ const ItineraryBuilder = () => {
                             ))}
                         </div>
                     </div>
+
+                    {/* Cultural Events & Volunteering */}
+                    <CulturalDiscovery locationId="bali" />
                 </div>
             </div>
         </div>

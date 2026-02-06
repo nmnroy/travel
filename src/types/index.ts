@@ -97,3 +97,14 @@ export interface SearchParams {
         groupType?: GroupType;
     };
 }
+
+export interface CulturalEvent {
+    id: string;
+    name: string;
+    description: string;
+    date: string;
+    type: 'festival' | 'volunteering' | 'workshop';
+    image: string;
+    impactScore?: number; // 1-10 scale for sustainable impact
+    locationId: string;
+}
