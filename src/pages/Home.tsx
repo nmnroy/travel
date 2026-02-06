@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { VoiceSearch } from '../components/core/VoiceSearch';
+import ItineraryBuilder from './ItineraryBuilder';
 import { Link } from 'react-router-dom';
 import { ExperienceCard } from '../components/core/ExperienceCard';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -125,6 +126,19 @@ const Home = () => {
                         </AnimatePresence>
                     </div>
                 )}
+            </section>
+
+            {/* Integrated Itinerary Builder */}
+            <section className="bg-slate-50 py-20 border-t border-slate-200">
+                <div className="container mx-auto px-4">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl font-bold text-slate-900 mb-4">Your Perfect Itinerary</h2>
+                        <p className="text-slate-500 max-w-2xl mx-auto">
+                            We've crafted a day-by-day plan based on your preferences. Customize it further to match your pace.
+                        </p>
+                    </div>
+                    <ItineraryBuilder />
+                </div>
             </section>
         </div>
     );
