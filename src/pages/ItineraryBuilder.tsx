@@ -32,8 +32,8 @@ const DAY_SCHEDULES: Record<number, Activity[]> = {
 };
 
 const UNLOCKABLE_ACTIVITIES: Activity[] = [
-    { id: 'u1', name: 'Nusa Penida Day Trip', description: 'Explore Kelingking Beach, Broken Beach, and Angel\'s Billabong.', category: 'adventure', duration: 8, price: 100, locationId: 'nusa', image: 'https://images.unsplash.com/photo-1596395818837-7798361e69cc' },
-    { id: 'u2', name: 'Ubud Art Market', description: 'Shop for local crafts and souvenirs.', category: 'shopping', duration: 2, price: 0, locationId: 'ubud', image: 'https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a' },
+    { id: 'u1', name: 'Nusa Penida Day Trip', description: 'Explore Kelingking Beach, Broken Beach, and Angel\'s Billabong.', category: 'adventure', duration: 8, price: 100, locationId: 'nusa', image: 'https://images.unsplash.com/photo-1596395818837-7798361e69cc?auto=format&fit=crop&w=800&q=80' },
+    { id: 'u2', name: 'Ubud Art Market', description: 'Shop for local crafts and souvenirs.', category: 'shopping', duration: 2, price: 0, locationId: 'ubud', image: 'https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?auto=format&fit=crop&w=800&q=80' },
 ];
 
 const GROUP_TYPES: { id: GroupType; icon: any; label: string }[] = [
