@@ -22,7 +22,8 @@ const LOCATION_COORDINATES: Record<string, { lat: number, lng: number }> = {
 
     // Nusa Penida
     'Kelingking Beach': { lat: -8.7505, lng: 115.4750 },
-    'Angel\'s Billabong': { lat: -8.7300, lng: 115.4500 }
+    'Angel\'s Billabong': { lat: -8.7300, lng: 115.4500 },
+    'Nusa Penida Day Trip': { lat: -8.7405, lng: 115.4950 } // Centered
 };
 
 export const ProximityService = {
