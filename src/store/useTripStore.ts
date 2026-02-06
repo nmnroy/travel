@@ -6,8 +6,10 @@ interface TripStore {
     query: string;
     isListening: boolean;
     parsedParams: SearchParams['parsed'];
+    dateRange: { from: Date | undefined; to: Date | undefined };
     setQuery: (query: string) => void;
     setParsedParams: (params: SearchParams['parsed']) => void;
+    setDateRange: (range: { from: Date | undefined; to: Date | undefined }) => void;
     setIsListening: (isListening: boolean) => void;
 
     // Trip Draft State
@@ -15,6 +17,10 @@ interface TripStore {
     updateTrip: (updates: Partial<TripDraft>) => void;
     addToTrip: (activityId: string) => void;
     removeFromTrip: (activityId: string) => void;
+
+    // User Personalization
+    favorites: string[];
+    toggleFavorite: (id: string) => void;
 
     // UI State
     viewMode: 'search' | 'itinerary' | 'booking';
@@ -25,8 +31,16 @@ export const useTripStore = create<TripStore>((set) => ({
     query: '',
     isListening: false,
     parsedParams: {},
+    dateRange: { from: undefined, to: undefined },
+    favorites: [],
     setQuery: (query) => set({ query }),
     setParsedParams: (params) => set({ parsedParams: params }),
+    setDateRange: (range) => set({ dateRange: range }),
+    toggleFavorite: (id) => set((state) => ({
+        favorites: state.favorites.includes(id)
+            ? state.favorites.filter(favId => favId !== id)
+            : [...state.favorites, id]
+    })),
     setIsListening: (isListening) => set({ isListening }),
 
     currentTrip: {
