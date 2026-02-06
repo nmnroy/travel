@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Plus, ChevronRight, Utensils, Users, User, Heart, Baby, Car, Clock, MapPin, X } from 'lucide-react';
+import { Calendar, Plus, ChevronRight, Utensils, Users, User, Heart, Baby, Car, Clock, MapPin } from 'lucide-react';
 import { useTripStore } from '../store/useTripStore';
 import { DiscoveryPersonalization } from '../services/discoveryPersonalization';
 import { ProximityService } from '../services/proximityService';
@@ -33,7 +33,7 @@ const DAY_SCHEDULES: Record<number, Activity[]> = {
 };
 
 const UNLOCKABLE_ACTIVITIES: Activity[] = [
-    { id: 'u1', name: 'Nusa Penida Day Trip', description: 'Explore Kelingking Beach, Broken Beach, and Angel\'s Billabong.', category: 'adventure', duration: 8, price: 100, locationId: 'nusa', image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80' },
+    { id: 'u1', name: 'Nusa Penida Day Trip', description: 'Explore Kelingking Beach, Broken Beach, and Angel\'s Billabong.', category: 'adventure', duration: 8, price: 100, locationId: 'nusa', image: 'https://images.unsplash.com/photo-1596395818837-7798361e69cc?auto=format&fit=crop&w=800&q=80' },
     { id: 'u2', name: 'Ubud Art Market', description: 'Shop for local crafts and souvenirs.', category: 'shopping', duration: 2, price: 0, locationId: 'ubud', image: 'https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?auto=format&fit=crop&w=800&q=80' },
 ];
 
@@ -79,15 +79,6 @@ const ItineraryBuilder = () => {
     const { parsedParams } = useTripStore();
     const [duration, setDuration] = useState(parsedParams?.duration || 4);
     const [selectedDay, setSelectedDay] = useState(1);
-    const [showAddModal, setShowAddModal] = useState(false);
-    const [customActivities, setCustomActivities] = useState<Record<number, Activity[]>>({});
-    const [newActivity, setNewActivity] = useState({
-        name: '',
-        description: '',
-        duration: 1,
-        price: 0,
-        category: 'sightseeing' as Activity['category']
-    });
 
     // Default group type from store or default to couple
     const [groupType, setGroupType] = useState<GroupType>(parsedParams?.groupType || 'couple');
@@ -103,51 +94,17 @@ const ItineraryBuilder = () => {
     // For this mock, we pretend the activities for Day 1 are "Proximity Group 1"
     // Determine activities for the current day
     const currentDayActivities = useMemo(() => {
-        let baseActivities: Activity[];
         if (selectedDay > 4) {
-            // Distribute unlockable activities across extra days if needed
-            baseActivities = selectedDay === 5 ? [UNLOCKABLE_ACTIVITIES[0]] : [UNLOCKABLE_ACTIVITIES[1]];
-        } else {
-            baseActivities = DAY_SCHEDULES[selectedDay] || DAY_SCHEDULES[1];
+            // Distribute unlockable activities across extra days if needed, 
+            // for now sticking to the fix of showing Nusa Penida for Day 5
+            return selectedDay === 5 ? [UNLOCKABLE_ACTIVITIES[0]] : [UNLOCKABLE_ACTIVITIES[1]];
         }
-        // Append custom activities for this day
-        const custom = customActivities[selectedDay] || [];
-        return [...baseActivities, ...custom];
-    }, [selectedDay, customActivities]);
+        return DAY_SCHEDULES[selectedDay] || DAY_SCHEDULES[1];
+    }, [selectedDay]);
     const activityGroups = useMemo(() => ProximityService.groupActivitiesByProximity(currentDayActivities), [currentDayActivities]);
 
     const handleGroupChange = (type: GroupType) => {
         setGroupType(type);
-    };
-
-    const handleAddActivity = () => {
-        if (!newActivity.name.trim()) return;
-
-        const activity: Activity = {
-            id: `custom_${Date.now()}`,
-            name: newActivity.name,
-            description: newActivity.description,
-            duration: newActivity.duration,
-            price: newActivity.price,
-            category: newActivity.category,
-            locationId: 'custom',
-            image: ''
-        };
-
-        setCustomActivities(prev => ({
-            ...prev,
-            [selectedDay]: [...(prev[selectedDay] || []), activity]
-        }));
-
-        // Reset form
-        setNewActivity({
-            name: '',
-            description: '',
-            duration: 1,
-            price: 0,
-            category: 'sightseeing'
-        });
-        setShowAddModal(false);
     };
 
     return (
@@ -355,10 +312,7 @@ const ItineraryBuilder = () => {
                             {selectedDay <= 4 && (
                                 <div className="relative">
                                     <div className="absolute -left-[41px] top-2 w-5 h-5 bg-white border-2 border-slate-300 rounded-full" />
-                                    <button
-                                        onClick={() => setShowAddModal(true)}
-                                        className="w-full py-4 border-2 border-dashed border-slate-300 rounded-xl text-slate-400 hover:text-brand-600 hover:border-brand-300 hover:bg-brand-50 transition-all flex items-center justify-center gap-2 font-medium"
-                                    >
+                                    <button className="w-full py-4 border-2 border-dashed border-slate-300 rounded-xl text-slate-400 hover:text-brand-600 hover:border-brand-300 hover:bg-brand-50 transition-all flex items-center justify-center gap-2 font-medium">
                                         <Plus size={20} />
                                         Add Activity
                                     </button>
@@ -431,130 +385,6 @@ const ItineraryBuilder = () => {
                     <CulturalDiscovery locationId="bali" />
                 </div>
             </div>
-
-            {/* Add Activity Modal */}
-            <AnimatePresence>
-                {showAddModal && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-                        onClick={() => setShowAddModal(false)}
-                    >
-                        <motion.div
-                            initial={{ scale: 0.95, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.95, opacity: 0 }}
-                            onClick={(e) => e.stopPropagation()}
-                            className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6"
-                        >
-                            <div className="flex items-center justify-between mb-6">
-                                <h3 className="text-xl font-bold text-slate-900">Add Custom Activity</h3>
-                                <button
-                                    onClick={() => setShowAddModal(false)}
-                                    className="p-2 hover:bg-slate-100 rounded-full transition-colors"
-                                >
-                                    <X size={20} className="text-slate-400" />
-                                </button>
-                            </div>
-
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                                        Activity Name *
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={newActivity.name}
-                                        onChange={(e) => setNewActivity({ ...newActivity, name: e.target.value })}
-                                        placeholder="e.g., Yoga Session"
-                                        className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                                        Description
-                                    </label>
-                                    <textarea
-                                        value={newActivity.description}
-                                        onChange={(e) => setNewActivity({ ...newActivity, description: e.target.value })}
-                                        placeholder="Brief description of the activity"
-                                        rows={3}
-                                        className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
-                                    />
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">
-                                            Duration (hours)
-                                        </label>
-                                        <input
-                                            type="number"
-                                            min="0.5"
-                                            step="0.5"
-                                            value={newActivity.duration}
-                                            onChange={(e) => setNewActivity({ ...newActivity, duration: parseFloat(e.target.value) })}
-                                            className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">
-                                            Price (₹)
-                                        </label>
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            value={newActivity.price}
-                                            onChange={(e) => setNewActivity({ ...newActivity, price: parseInt(e.target.value) })}
-                                            className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                                        Category
-                                    </label>
-                                    <select
-                                        value={newActivity.category}
-                                        onChange={(e) => setNewActivity({ ...newActivity, category: e.target.value as Activity['category'] })}
-                                        className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
-                                    >
-                                        <option value="sightseeing">Sightseeing</option>
-                                        <option value="adventure">Adventure</option>
-                                        <option value="culture">Culture</option>
-                                        <option value="nature">Nature</option>
-                                        <option value="food">Food</option>
-                                        <option value="beach">Beach</option>
-                                        <option value="shopping">Shopping</option>
-                                        <option value="show">Show/Performance</option>
-                                    </select>
-                                </div>
-
-                                <div className="flex gap-3 pt-4">
-                                    <button
-                                        onClick={() => setShowAddModal(false)}
-                                        className="flex-1 px-4 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors font-medium"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        onClick={handleAddActivity}
-                                        disabled={!newActivity.name.trim()}
-                                        className="flex-1 px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                                    >
-                                        Add Activity
-                                    </button>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
         </div>
     );
 };
