@@ -1,73 +1,65 @@
-# React + TypeScript + Vite
+# Travel Pro 🌍✈️
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, AI-powered travel booking platform built with **React**, **TypeScript**, and **Tailwind CSS**. 
 
-Currently, two official plugins are available:
+Experience the future of travel planning with voice-activated search, experience-based discovery (Beaches, Mountains, Culture, Nature), and a unified booking flow.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Key Features
 
-## React Compiler
+- **🎙️ Voice-Enabled Smart Search**:  
+  Just say *"Plan a trip to Bali for 5 days"* and watch the magic happen. Real-time speech-to-text integration detects destination, duration, and intent.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **🏝️ Experience-Based Discovery**:  
+  Don't know where to go? Browse by vibe:
+  - **Beaches**: Bali, Santorini
+  - **Mountains**: Swiss Alps
+  - **Culture**: Kyoto, Machu Picchu
+  - **Nature**: Amazon Rainforest
 
-## Expanding the ESLint configuration
+- **📅 Intelligent Itinerary Builder**:  
+  Interactive drag-and-drop style itinerary planner with a timeline view. 
+  - Compare **3-day vs 5-day** trips.
+  - See "Unlockable Content" when expanding your trip duration.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **⚡ Unified Booking Platform**:  
+  Seamless flow from search results → traveler details → simulated payment → confirmation. Includes "Budget Optimization" mode.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🛠️ Tech Stack
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- **Frontend**: React 18, TypeScript, Vite
+- **Styling**: Tailwind CSS v3 (Custom Configuration)
+- **State Management**: Zustand
+- **Animations**: Framer Motion
+- **Icons**: Lucide React
+- **Routing**: React Router DOM v6
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 🚀 Getting Started
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+1.  **Clone the repository**
+    ```bash
+    git clone https://github.com/nmnroy/travel.git
+    cd travel
+    ```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+2.  **Install dependencies**
+    ```bash
+    npm install
+    ```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+3.  **Run the development server**
+    ```bash
+    npm run dev
+    ```
+
+4.  **Build for production**
+    ```bash
+    npm run build
+    ```
+
+## 📸 Screenshots
+
+*(Add your screenshots here)*
+
+## 📄 License
+
+This project is open source and available under the [MIT License](LICENSE).

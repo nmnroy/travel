@@ -2,6 +2,8 @@
   "name": "travel-pro",
   "private": true,
   "version": "0.0.0",
+  "description": "An AI-powered travel booking application featuring voice search, experience based discovery, and intelligent itinerary planning.",
+  "author": "Nitin Roy",
   "type": "module",
   "scripts": {
     "dev": "vite",
