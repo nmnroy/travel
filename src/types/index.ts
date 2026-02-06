@@ -28,6 +28,33 @@ export interface Activity {
     image: string;
 }
 
+export interface TransportOption {
+    id: string;
+    type: 'flight' | 'train';
+    provider: string;
+    departureTime: string;
+    arrivalTime: string;
+    duration: string;
+    price: number;
+    class: string;
+}
+
+export interface TransferOption {
+    id: string;
+    type: 'cab' | 'shuttle' | 'train';
+    vehicleType: string;
+    price: number;
+    duration: string;
+}
+
+export interface BookingItem {
+    id: string;
+    type: 'flight' | 'train' | 'hotel' | 'transfer' | 'activity';
+    name: string;
+    price: number;
+    details?: any;
+}
+
 export interface TripDraft {
     destination?: TravelLocation;
     startDate?: Date;
@@ -37,7 +64,12 @@ export interface TripDraft {
         children: number;
     };
     budget?: number;
+    // Selected Items for Unified Checkout
+    transport?: TransportOption;
+    transfer?: TransferOption;
+    hotel?: TravelLocation; // Using Location as Hotel for now
     activities: Activity[];
+    totalPrice: number;
 }
 
 export interface SearchParams {

@@ -55,6 +55,11 @@ const SearchResults = () => {
                             <h1 className="text-2xl font-bold">
                                 Results for "{query || '...'}"
                             </h1>
+                            <div className="flex gap-2">
+                                <Link to="/book/wizard" className="text-xs bg-brand-50 text-brand-600 px-3 py-1 rounded-full font-bold hover:bg-brand-100 flex items-center gap-1">
+                                    ✨ Try Unified Booking Wizard
+                                </Link>
+                            </div>
                             <div className="flex flex-wrap items-center gap-2 mt-2">
                                 <div className="w-64">
                                     <DateRangePicker />

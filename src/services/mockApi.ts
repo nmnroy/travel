@@ -116,5 +116,23 @@ export const mockApi = {
                 verified: true
             }
         ];
+    },
+
+    getTransportOptions: async (_destination: string) => {
+        await new Promise(resolve => setTimeout(resolve, 600));
+        return [
+            { id: 'f1', type: 'flight', provider: 'AirIndya', departureTime: '10:00 AM', arrivalTime: '2:00 PM', duration: '4h', price: 450, class: 'Economy' },
+            { id: 'f2', type: 'flight', provider: 'FlyGlobal', departureTime: '6:00 AM', arrivalTime: '9:30 AM', duration: '3.5h', price: 520, class: 'Economy' },
+            { id: 't1', type: 'train', provider: 'RailRapid', departureTime: '8:00 AM', arrivalTime: '8:00 PM', duration: '12h', price: 120, class: 'Sleeper' },
+        ];
+    },
+
+    getTransferOptions: async (_locationId: string) => {
+        await new Promise(resolve => setTimeout(resolve, 400));
+        return [
+            { id: 'c1', type: 'cab', vehicleType: 'Sedan', price: 40, duration: '45m' },
+            { id: 'c2', type: 'cab', vehicleType: 'SUV', price: 65, duration: '45m' },
+            { id: 's1', type: 'shuttle', vehicleType: 'Shared Van', price: 15, duration: '1h 10m' },
+        ];
     }
 };

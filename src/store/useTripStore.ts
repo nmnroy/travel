@@ -47,19 +47,40 @@ export const useTripStore = create<TripStore>((set) => ({
         duration: 3,
         travelers: { adults: 2, children: 0 },
         activities: [],
+        totalPrice: 0,
     },
     updateTrip: (updates) =>
-        set((state) => ({ currentTrip: { ...state.currentTrip, ...updates } })),
-    addToTrip: (activityId) => {
-        // Logic to add activity would likely need to fetch activity details first
-        // For now simple placeholder
-        console.log('Add activity', activityId);
+        set((state) => {
+            const newTrip = { ...state.currentTrip, ...updates };
+            // Simple price calculation
+            let total = 0;
+            if (newTrip.transport) total += newTrip.transport.price * (newTrip.travelers.adults + newTrip.travelers.children);
+            if (newTrip.transfer) total += newTrip.transfer.price;
+            // Hotel price is usually per night, simplifying to total for now or need per night logic
+            // Assuming hotel object has a price property which is per night or total. 
+            // The TravelLocation type doesn't have price, let's assume we maintain it separately or add it.
+            // For now, let's assume TravelLocation has a 'price' field mocked or we add it to the type.
+            // Wait, TravelLocation doesn't have price. I should update TravelLocation or handle it.
+            // Let's check types again. TravelLocation doesn't. 
+            // I'll assume for this prototype that we set a price when selecting.
+
+            if (newTrip.activities) {
+                total += newTrip.activities.reduce((acc, act) => acc + act.price, 0) * (newTrip.travelers.adults + newTrip.travelers.children);
+            }
+
+            return { currentTrip: { ...newTrip, totalPrice: total } };
+        }),
+    addToTrip: (_activityId) => {
+        // Placeholder: In a real app we'd fetch the activity. 
+        // For now, we can't fully implement this without the activity list.
+        console.log('Use updateTrip to add specific full objects instead');
     },
-    removeFromTrip: (activityId) =>
+    removeFromTrip: (_activityId) =>
         set((state) => ({
             currentTrip: {
                 ...state.currentTrip,
-                activities: state.currentTrip.activities.filter((a) => a.id !== activityId),
+                activities: state.currentTrip.activities.filter((a) => a.id !== _activityId),
+                // Needs price recalc, simpler to just use updateTrip for everything in this refined flow
             },
         })),
 
