@@ -3,22 +3,33 @@ import { Mic, Search, X } from 'lucide-react';
 import { useTripStore } from '../../store/useTripStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { parseVoiceQuery } from '../../services/voiceParser';
 
 export const VoiceSearch = () => {
-    const { isListening, setIsListening, query, setQuery } = useTripStore();
+    const { isListening, setIsListening, query, setQuery, setParsedParams } = useTripStore();
     const [localQuery, setLocalQuery] = useState(query);
     const navigate = useNavigate();
 
+    const handleSearch = () => {
+        if (localQuery.trim()) {
+            setQuery(localQuery);
+            const parsed = parseVoiceQuery(localQuery);
+            setParsedParams(parsed);
+            navigate('/search');
+        }
+    };
+
     const toggleListening = () => {
-        // Mock listening toggle
         const newState = !isListening;
         setIsListening(newState);
         if (newState) {
-            // Simulate voice input
+            // Simulate voice input with a complex query for demo purposes
             setTimeout(() => {
-                const mockQuery = "Bali";
+                const mockQuery = "Plan a 5 day trip to Bali for 2 people with a budget of 2000 dollars";
                 setLocalQuery(mockQuery);
-                setQuery(mockQuery); // Update store immediately for demo
+                setQuery(mockQuery);
+                const parsed = parseVoiceQuery(mockQuery);
+                setParsedParams(parsed);
                 setIsListening(false);
                 navigate('/search');
             }, 3000);
@@ -28,13 +39,6 @@ export const VoiceSearch = () => {
     useEffect(() => {
         setQuery(localQuery);
     }, [localQuery, setQuery]);
-
-    const handleSearch = () => {
-        if (localQuery.trim()) {
-            setQuery(localQuery);
-            navigate('/search');
-        }
-    };
 
     return (
         <div className="relative w-full max-w-2xl mx-auto">

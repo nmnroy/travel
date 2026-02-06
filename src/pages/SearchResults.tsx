@@ -64,6 +64,21 @@ const SearchResults = () => {
                                         {parsedParams.people} People
                                     </span>
                                 )}
+                                {parsedParams.duration && (
+                                    <span className="bg-blue-50 text-blue-700 px-3 py-2 rounded-lg text-sm font-medium border border-blue-100">
+                                        {parsedParams.duration} Days
+                                    </span>
+                                )}
+                                {parsedParams.budget && (
+                                    <span className="bg-green-50 text-green-700 px-3 py-2 rounded-lg text-sm font-medium border border-green-100">
+                                        ${parsedParams.budget} Budget
+                                    </span>
+                                )}
+                                {parsedParams.preferences?.map(pref => (
+                                    <span key={pref} className="bg-orange-50 text-orange-700 px-3 py-2 rounded-lg text-sm font-medium border border-orange-100 capitalize">
+                                        {pref}
+                                    </span>
+                                ))}
                             </div>
                         </div>
 

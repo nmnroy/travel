@@ -47,5 +47,6 @@ export interface SearchParams {
         budget?: number;
         duration?: number;
         people?: number;
+        preferences?: string[];
     };
 }
