@@ -72,6 +72,20 @@ export interface TripDraft {
     totalPrice: number;
 }
 
+// Local Discovery
+export type GroupType = 'solo' | 'couple' | 'family' | 'friends';
+
+export interface Restaurant {
+    id: string;
+    name: string;
+    cuisine: string;
+    rating: number;
+    priceLevel: 'cheap' | 'moderate' | 'expensive';
+    image: string;
+    tags: string[]; // e.g., 'vegetarian', 'kid-friendly', 'romantic', 'iconic'
+    locationId: string;
+}
+
 export interface SearchParams {
     query: string;
     parsed: {
@@ -80,5 +94,6 @@ export interface SearchParams {
         duration?: number;
         people?: number;
         preferences?: string[];
+        groupType?: GroupType;
     };
 }
