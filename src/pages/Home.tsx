@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { VoiceSearch } from '../components/core/VoiceSearch';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ArrowRight, MapPin, Calendar, Star, Mic, Search } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowRight, MapPin, Calendar, Star, Mic } from 'lucide-react';
 
 const EXPERIENCE_CATEGORIES = [
     { id: 'beach', icon: '🏖️', label: 'Beach', desc: 'Sun, sand & sea' },

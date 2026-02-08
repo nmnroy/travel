@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { User, Mail, Phone, Users, Globe, Calendar, AlertCircle } from 'lucide-react';
 
 interface TravelerDetailsFormProps {

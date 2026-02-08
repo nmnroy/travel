@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Check, Calendar, Users, Plane, Hotel, CreditCard, Mail, Download, Share2, Home, ArrowRight } from 'lucide-react';
+import { Check, Calendar, Plane, Hotel, CreditCard, Mail, Download, Home } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const BookingConfirmation = () => {
@@ -14,7 +14,7 @@ export const BookingConfirmation = () => {
     endDate.setDate(endDate.getDate() + 5);
 
     const formatDate = (date: Date) => date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    const formatTime = (date: Date) => date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
 
     // Confetti / Celebration effect on mount
     useEffect(() => {

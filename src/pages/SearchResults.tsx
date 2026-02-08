@@ -3,8 +3,8 @@ import { useTripStore } from '../store/useTripStore';
 import { mockApi } from '../services/mockApi';
 import type { TravelLocation } from '../types';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Plane, Hotel, Utensils, Map, LayoutGrid, Check, Star, Filter, ToggleLeft, ToggleRight, Calendar } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { ArrowRight, Plane, Hotel, Utensils, Map, LayoutGrid, Check, Star, Filter, Calendar, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const TABS = [
     { id: 'overview', label: 'Overview', icon: LayoutGrid },
@@ -17,7 +17,6 @@ const TABS = [
 const SearchResults = () => {
     const { query, parsedParams, isBudgetOptimized, setBudgetOptimized } = useTripStore();
     const [activeTab, setActiveTab] = useState('overview');
-    const [loading, setLoading] = useState(true);
 
     // Data State
     const [locations, setLocations] = useState<TravelLocation[]>([]);
@@ -25,11 +24,8 @@ const SearchResults = () => {
     const [hotels, setHotels] = useState<any[]>([]);
     const [restaurants, setRestaurants] = useState<any[]>([]);
 
-    const navigate = useNavigate();
-
     useEffect(() => {
         const loadData = async () => {
-            setLoading(true);
             try {
                 const [locs, fls, hts, rests] = await Promise.all([
                     mockApi.searchLocations(parsedParams.destination || query),
@@ -43,8 +39,6 @@ const SearchResults = () => {
                 setRestaurants(rests);
             } catch (err) {
                 console.error("Failed to load search data", err);
-            } finally {
-                setLoading(false);
             }
         };
         loadData();

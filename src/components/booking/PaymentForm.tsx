@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { CreditCard, Smartphone, Building, User, Lock, ShieldCheck, ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
 
 interface PaymentFormProps {

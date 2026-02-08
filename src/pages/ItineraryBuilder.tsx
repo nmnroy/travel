@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Clock, MapPin, Star, X, Plus, Calendar, Users, Wallet, ChevronRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Clock, MapPin, Star, X, Plus, Calendar, Users, Wallet } from 'lucide-react';
 import { useTripStore } from '../store/useTripStore';
 
 // --- Types ---
