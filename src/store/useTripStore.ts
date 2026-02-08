@@ -21,10 +21,17 @@ interface TripStore {
     // User Personalization
     favorites: string[];
     toggleFavorite: (id: string) => void;
+    searchHistory: import('../types').SearchHistoryItem[];
+    addToHistory: (query: string, parsed: SearchParams['parsed']) => void;
+    clearHistory: () => void;
 
     // UI State
     viewMode: 'search' | 'itinerary' | 'booking';
     setViewMode: (mode: 'search' | 'itinerary' | 'booking') => void;
+
+    // Budget Optimization
+    isBudgetOptimized: boolean;
+    setBudgetOptimized: (enabled: boolean) => void;
 }
 
 export const useTripStore = create<TripStore>((set) => ({
@@ -32,55 +39,83 @@ export const useTripStore = create<TripStore>((set) => ({
     isListening: false,
     parsedParams: {},
     dateRange: { from: undefined, to: undefined },
-    favorites: [],
+    favorites: JSON.parse(localStorage.getItem('experio_favorites') || '[]'),
+    searchHistory: JSON.parse(localStorage.getItem('travel-pro-search-history') || '[]'),
+    isBudgetOptimized: JSON.parse(localStorage.getItem('travel-pro-budget-optimized') || 'false'),
+
     setQuery: (query) => set({ query }),
     setParsedParams: (params) => set({ parsedParams: params }),
     setDateRange: (range) => set({ dateRange: range }),
-    toggleFavorite: (id) => set((state) => ({
-        favorites: state.favorites.includes(id)
+
+    setBudgetOptimized: (enabled) => {
+        localStorage.setItem('travel-pro-budget-optimized', JSON.stringify(enabled));
+        set({ isBudgetOptimized: enabled });
+    },
+
+    toggleFavorite: (id) => set((state) => {
+        const newFavorites = state.favorites.includes(id)
             ? state.favorites.filter(favId => favId !== id)
-            : [...state.favorites, id]
-    })),
+            : [...state.favorites, id];
+        localStorage.setItem('experio_favorites', JSON.stringify(newFavorites));
+        return { favorites: newFavorites };
+    }),
+
+    addToHistory: (query, parsed) => set((state) => {
+        if (!query.trim()) return state;
+
+        const newItem: import('../types').SearchHistoryItem = {
+            id: Date.now().toString(),
+            query,
+            timestamp: Date.now(),
+            parsedParams: parsed
+        };
+
+        // Filter out duplicates (same query) and keep max 10
+        const filteredHistory = state.searchHistory.filter(item => item.query.toLowerCase() !== query.toLowerCase());
+        const newHistory = [newItem, ...filteredHistory].slice(0, 10);
+
+        localStorage.setItem('travel-pro-search-history', JSON.stringify(newHistory));
+        return { searchHistory: newHistory };
+    }),
+
+    clearHistory: () => {
+        if (window.confirm('Are you sure you want to clear your search history?')) {
+            localStorage.removeItem('travel-pro-search-history');
+            set({ searchHistory: [] });
+        }
+    },
+
     setIsListening: (isListening) => set({ isListening }),
 
-    currentTrip: {
+    currentTrip: JSON.parse(localStorage.getItem('experio_current_trip') || JSON.stringify({
         duration: 3,
         travelers: { adults: 2, children: 0 },
         activities: [],
         totalPrice: 0,
-    },
+    })),
     updateTrip: (updates) =>
         set((state) => {
             const newTrip = { ...state.currentTrip, ...updates };
-            // Simple price calculation
+            // Simple price calculation simulation (in real app, this would be more complex)
             let total = 0;
-            if (newTrip.transport) total += newTrip.transport.price * (newTrip.travelers.adults + newTrip.travelers.children);
+            if (newTrip.transport) total += newTrip.transport.price;
             if (newTrip.transfer) total += newTrip.transfer.price;
-            // Hotel price is usually per night, simplifying to total for now or need per night logic
-            // Assuming hotel object has a price property which is per night or total. 
-            // The TravelLocation type doesn't have price, let's assume we maintain it separately or add it.
-            // For now, let's assume TravelLocation has a 'price' field mocked or we add it to the type.
-            // Wait, TravelLocation doesn't have price. I should update TravelLocation or handle it.
-            // Let's check types again. TravelLocation doesn't. 
-            // I'll assume for this prototype that we set a price when selecting.
+            if (newTrip.hotel) total += newTrip.hotel.price || 5000; // Mock hotel price if missing
 
-            if (newTrip.activities) {
-                total += newTrip.activities.reduce((acc, act) => acc + act.price, 0) * (newTrip.travelers.adults + newTrip.travelers.children);
-            }
+            // Persist
+            const updatedDraft = { ...newTrip, totalPrice: total };
+            localStorage.setItem('experio_current_trip', JSON.stringify(updatedDraft));
 
-            return { currentTrip: { ...newTrip, totalPrice: total } };
+            return { currentTrip: updatedDraft };
         }),
     addToTrip: (_activityId) => {
-        // Placeholder: In a real app we'd fetch the activity. 
-        // For now, we can't fully implement this without the activity list.
-        console.log('Use updateTrip to add specific full objects instead');
+        // Placeholder
     },
     removeFromTrip: (_activityId) =>
         set((state) => ({
             currentTrip: {
                 ...state.currentTrip,
                 activities: state.currentTrip.activities.filter((a) => a.id !== _activityId),
-                // Needs price recalc, simpler to just use updateTrip for everything in this refined flow
             },
         })),
 

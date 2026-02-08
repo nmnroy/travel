@@ -3,7 +3,13 @@
 @tailwind utilities;
 
 @layer base {
+
+  html,
   body {
-    @apply bg-slate-50 text-slate-900;
+    @apply bg-slate-50 text-slate-900 overflow-x-hidden;
+  }
+
+  img {
+    @apply max-w-full h-auto;
   }
 }

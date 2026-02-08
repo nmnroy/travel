@@ -15,6 +15,7 @@ export interface TravelLocation {
     category: 'beach' | 'mountain' | 'city' | 'nature' | 'adventure' | 'culture' | 'history';
     tags: string[];
     rating: number;
+    price?: number;
 }
 
 export interface Activity {
@@ -70,6 +71,24 @@ export interface TripDraft {
     hotel?: TravelLocation; // Using Location as Hotel for now
     activities: Activity[];
     totalPrice: number;
+
+    // Booking Details
+    travelerDetails?: TravelerDetails;
+    paymentInfo?: PaymentInfo;
+    bookingId?: string;
+}
+
+export interface TravelerDetails {
+    fullName: string;
+    email: string;
+    phone: string;
+    phoneCode: string;
+    specialRequests?: string;
+}
+
+export interface PaymentInfo {
+    method: 'card' | 'upi' | 'netbanking';
+    last4?: string;
 }
 
 // Local Discovery
@@ -96,6 +115,13 @@ export interface SearchParams {
         preferences?: string[];
         groupType?: GroupType;
     };
+}
+
+export interface SearchHistoryItem {
+    id: string;
+    query: string;
+    timestamp: number;
+    parsedParams: SearchParams['parsed'];
 }
 
 export interface CulturalEvent {

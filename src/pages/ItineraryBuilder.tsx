@@ -1,388 +1,323 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Plus, ChevronRight, Utensils, Users, User, Heart, Baby, Car, Clock, MapPin } from 'lucide-react';
+import { Clock, MapPin, Star, X, Plus, Calendar, Users, Wallet, ChevronRight } from 'lucide-react';
 import { useTripStore } from '../store/useTripStore';
-import { DiscoveryPersonalization } from '../services/discoveryPersonalization';
-import { ProximityService } from '../services/proximityService';
-import CulturalDiscovery from '../components/core/CulturalDiscovery';
-import type { GroupType, Activity } from '../types';
 
-const DAY_SCHEDULES: Record<number, Activity[]> = {
-    1: [
-        { id: 'd1_1', name: 'Arrival & Check-in', description: 'Check into your hotel and relax.', category: 'fast', duration: 1, price: 0, locationId: 'seminyak', image: '' },
-        { id: 'd1_2', name: 'Sunset at Tanah Lot', description: 'Watch the iconic sunset at the sea temple.', category: 'culture', duration: 2, price: 20, locationId: 'tabanan', image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4' },
-        { id: 'd1_3', name: 'Seafood Dinner at Jimbaran', description: 'Enjoy fresh seafood on the beach.', category: 'food', duration: 2, price: 50, locationId: 'jimbaran', image: '' },
-    ],
-    2: [
-        { id: 'd2_1', name: 'Tegalalang Rice Terrace', description: 'Walk through the famous rice paddies.', category: 'nature', duration: 2, price: 10, locationId: 'ubud', image: 'https://images.unsplash.com/photo-1518548419970-58e3b4079ab2' },
-        { id: 'd2_2', name: 'Sacred Monkey Forest', description: 'Visit the sanctuary of the long-tailed macaques.', category: 'adventure', duration: 1.5, price: 15, locationId: 'ubud', image: '' },
-        { id: 'd2_3', name: 'Ubud Royal Palace', description: 'Explore the historical palace.', category: 'culture', duration: 1, price: 5, locationId: 'ubud', image: '' },
-        { id: 'd2_4', name: 'Campuhan Ridge Walk', description: 'Scenic nature walk.', category: 'nature', duration: 1.5, price: 0, locationId: 'ubud', image: '' },
-    ],
-    3: [
-        { id: 'd3_1', name: 'Ulun Danu Beratan Temple', description: 'Iconic temple on the lake.', category: 'culture', duration: 1.5, price: 10, locationId: 'bedugul', image: 'https://images.unsplash.com/photo-1555400038-63f5ba517a47' },
-        { id: 'd3_2', name: 'Handara Gate', description: 'Famous Instagram spot.', category: 'sightseeing', duration: 0.5, price: 5, locationId: 'bedugul', image: '' },
-        { id: 'd3_3', name: 'Banyumala Twin Waterfalls', description: 'Swim in the crystal clear waters.', category: 'nature', duration: 2, price: 10, locationId: 'wanagiri', image: '' },
-    ],
-    4: [
-        { id: 'd4_1', name: 'Visit Uluwatu Temple', description: 'Temple on a cliff with ocean views.', category: 'culture', duration: 2, price: 50, locationId: 'uluwatu', image: 'https://images.unsplash.com/photo-1555400038-63f5ba517a47' },
-        { id: 'd4_2', name: 'Lunch at Single Fin', description: 'Great food with a view.', category: 'food', duration: 1.5, price: 30, locationId: 'uluwatu', image: '' },
-        { id: 'd4_3', name: 'Padang Padang Beach', description: 'Beautiful beach for swimming.', category: 'beach', duration: 3, price: 0, locationId: 'uluwatu', image: '' },
-        { id: 'd4_4', name: 'Kecak Fire Dance', description: 'Traditional dance performance at sunset.', category: 'show', duration: 1, price: 15, locationId: 'uluwatu', image: '' },
-    ]
-};
+// --- Types ---
+interface ItineraryActivity {
+    id: string;
+    name: string;
+    time: string;
+    duration: string;
+    rating: number;
+    image?: string;
+    category?: string;
+}
 
-const UNLOCKABLE_ACTIVITIES: Activity[] = [
-    { id: 'u1', name: 'Nusa Penida Day Trip', description: 'Explore Kelingking Beach, Broken Beach, and Angel\'s Billabong.', category: 'adventure', duration: 8, price: 100, locationId: 'nusa', image: 'https://images.unsplash.com/photo-1596395818837-7798361e69cc?auto=format&fit=crop&w=800&q=80' },
-    { id: 'u2', name: 'Ubud Art Market', description: 'Shop for local crafts and souvenirs.', category: 'shopping', duration: 2, price: 0, locationId: 'ubud', image: 'https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?auto=format&fit=crop&w=800&q=80' },
+interface DaySchedule {
+    day: number;
+    title: string;
+    date: string; // Mock date string
+    morning: ItineraryActivity[];
+    afternoon: ItineraryActivity[];
+    evening: ItineraryActivity[];
+}
+
+// --- Mock Data ---
+const MOCK_ITINERARY: DaySchedule[] = [
+    {
+        day: 1,
+        title: "South Bali - Seminyak & Tanah Lot",
+        date: "Mon, Oct 24",
+        morning: [
+            { id: 'd1_m1', name: 'Seminyak Beach', time: '9:00 AM - 12:00 PM', duration: '3 hours', rating: 4.6, category: 'Beach', image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4' }
+        ],
+        afternoon: [
+            { id: 'd1_a1', name: 'Tanah Lot Temple', time: '1:00 PM - 3:00 PM', duration: '2 hours', rating: 4.7, category: 'Culture', image: 'https://images.unsplash.com/photo-1537953773345-d172ccf13cf1' },
+            { id: 'd1_a2', name: 'Explore Canggu Cafes', time: '3:30 PM - 5:30 PM', duration: '2 hours', rating: 4.5, category: 'Food' }
+        ],
+        evening: [
+            { id: 'd1_e1', name: 'Dinner at Warung Biah Biah', time: '6:00 PM - 8:00 PM', duration: '2 hours', rating: 4.8, category: 'Dining' }
+        ]
+    },
+    {
+        day: 2,
+        title: "Ubud - Culture & Nature",
+        date: "Tue, Oct 25",
+        morning: [
+            { id: 'd2_m1', name: 'Tegallalang Rice Terraces', time: '8:00 AM - 11:00 AM', duration: '3 hours', rating: 4.8, category: 'Nature', image: 'https://images.unsplash.com/photo-1518548419970-58e3b4079ab2' }
+        ],
+        afternoon: [
+            { id: 'd2_a1', name: 'Sacred Monkey Forest', time: '2:00 PM - 4:00 PM', duration: '2 hours', rating: 4.5, category: 'Wildlife' },
+            { id: 'd2_a2', name: 'Ubud Art Market', time: '4:30 PM - 6:00 PM', duration: '1.5 hours', rating: 4.4, category: 'Shopping' }
+        ],
+        evening: [
+            { id: 'd2_e1', name: 'Locavore Restaurant', time: '7:00 PM - 9:00 PM', duration: '2 hours', rating: 4.9, category: 'Fine Dining' }
+        ]
+    },
+    {
+        day: 3,
+        title: "North Bali - Waterfalls & Lakes",
+        date: "Wed, Oct 26",
+        morning: [
+            { id: 'd3_m1', name: 'Ulun Danu Beratan Temple', time: '8:30 AM - 10:30 AM', duration: '2 hours', rating: 4.7, category: 'Culture', image: 'https://images.unsplash.com/photo-1555400038-63f5ba517a47' }
+        ],
+        afternoon: [
+            { id: 'd3_a1', name: 'Banyumala Twin Waterfalls', time: '12:00 PM - 3:00 PM', duration: '3 hours', rating: 4.8, category: 'Adventure' }
+        ],
+        evening: [
+            { id: 'd3_e1', name: 'Relax at Hotel Spa', time: '6:00 PM - 8:00 PM', duration: '2 hours', rating: 4.9, category: 'Wellness' }
+        ]
+    },
+    {
+        day: 4,
+        title: "East Bali - Gates of Heaven",
+        date: "Thu, Oct 27",
+        morning: [
+            { id: 'd4_m1', name: 'Lempuyang Temple (Gates of Heaven)', time: '7:00 AM - 10:00 AM', duration: '3 hours', rating: 4.6, category: 'Sightseeing' }
+        ],
+        afternoon: [
+            { id: 'd4_a1', name: 'Tirta Gangga Water Palace', time: '12:00 PM - 2:00 PM', duration: '2 hours', rating: 4.7, category: 'History' },
+            { id: 'd4_a2', name: 'Virgin Beach', time: '3:00 PM - 5:00 PM', duration: '2 hours', rating: 4.5, category: 'Beach' }
+        ],
+        evening: [
+            { id: 'd4_e1', name: 'Seafood Dinner in Candidasa', time: '7:00 PM - 9:00 PM', duration: '2 hours', rating: 4.6, category: 'Dining' }
+        ]
+    },
+    {
+        day: 5,
+        title: "Uluwatu - Cliffs & Departure",
+        date: "Fri, Oct 28",
+        morning: [
+            { id: 'd5_m1', name: 'Relax at Padang Padang Beach', time: '9:00 AM - 12:00 PM', duration: '3 hours', rating: 4.6, category: 'Beach' }
+        ],
+        afternoon: [
+            { id: 'd5_a1', name: 'Uluwatu Temple', time: '4:00 PM - 6:00 PM', duration: '2 hours', rating: 4.8, category: 'Culture' }
+        ],
+        evening: [
+            { id: 'd5_e1', name: 'Kecak Fire Dance', time: '6:00 PM - 7:00 PM', duration: '1 hour', rating: 4.9, category: 'Show' },
+            { id: 'd5_e2', name: 'Departure Transfer', time: '8:30 PM', duration: '1 hour', rating: 0, category: 'Transit' }
+        ]
+    }
 ];
 
-const GROUP_TYPES: { id: GroupType; icon: any; label: string }[] = [
-    { id: 'solo', icon: User, label: 'Solo' },
-    { id: 'couple', icon: Heart, label: 'Couple' },
-    { id: 'family', icon: Baby, label: 'Family' },
-    { id: 'friends', icon: Users, label: 'Friends' },
-];
+// --- Components ---
 
-const CommuteGuide = ({ activityCount }: { activityCount: number }) => {
-    const commute = ProximityService.getCommuteInfo(activityCount);
+const ActivityCard = ({ activity, onRemove }: { activity: ItineraryActivity; onRemove: (id: string) => void }) => (
+    <motion.div
+        layout
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.9 }}
+        className="group relative bg-white rounded-xl p-4 shadow-sm border border-slate-100 hover:shadow-md transition-all flex gap-4 items-start"
+    >
+        {/* Optional Image */}
+        {activity.image && (
+            <img src={activity.image} alt={activity.name} className="w-16 h-16 rounded-lg object-cover flex-shrink-0" />
+        )}
 
+        {/* Connector Line (Visual only, creates timeline feel) */}
+        {!activity.image && (
+            <div className="w-16 h-16 rounded-lg bg-indigo-50 flex items-center justify-center flex-shrink-0 text-2xl">
+                {activity.category === 'Beach' ? '🏖️' :
+                    activity.category === 'Culture' ? '⛩️' :
+                        activity.category === 'Nature' ? '🌾' :
+                            activity.category === 'Food' || activity.category === 'Dining' ? '🍽️' :
+                                activity.category === 'Shopping' ? '🛍️' : '📍'}
+            </div>
+        )}
+
+        <div className="flex-1">
+            <div className="flex justify-between items-start">
+                <h4 className="font-bold text-slate-800 text-sm sm:text-base">{activity.name}</h4>
+                <button
+                    onClick={() => onRemove(activity.id)}
+                    className="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1"
+                    title="Remove Activity"
+                >
+                    <X size={16} />
+                </button>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-xs text-slate-500">
+                <span className="flex items-center gap-1 font-medium text-slate-600 bg-slate-50 px-2 py-0.5 rounded">
+                    <Clock size={12} className="text-slate-400" /> {activity.time}
+                </span>
+                <span>•</span>
+                <span>{activity.duration}</span>
+                {activity.rating > 0 && (
+                    <>
+                        <span>•</span>
+                        <span className="flex items-center gap-1 text-amber-500 font-bold">
+                            <Star size={10} fill="currentColor" /> {activity.rating}
+                        </span>
+                    </>
+                )}
+            </div>
+        </div>
+    </motion.div>
+);
+
+const DaySection = ({ day, onDeleteActivity }: { day: DaySchedule; onDeleteActivity: (dayIdx: number, period: 'morning' | 'afternoon' | 'evening', actId: string) => void }) => {
     return (
-        <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4 flex flex-wrap items-center justify-between gap-4 mt-4">
-            <div className="flex items-center gap-3">
-                <div className="bg-white p-2 rounded-full shadow-sm text-indigo-600">
-                    {commute.method === 'Scooter' ? <Car size={20} /> : <Car size={20} />}
+        <div className="mb-10 last:mb-0">
+            {/* Day Header */}
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-6 text-white shadow-lg shadow-indigo-200 mb-6 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-8 opacity-10 text-9xl font-bold leading-none select-none">
+                    {day.day}
                 </div>
-                <div>
-                    <p className="text-xs text-indigo-500 font-bold uppercase tracking-wider">Transit Guide</p>
-                    <p className="font-bold text-slate-800 text-sm">Best Way: {commute.method}</p>
+                <div className="relative z-10">
+                    <div className="flex items-center gap-2 text-blue-100 font-medium text-sm mb-1">
+                        <Calendar size={14} />
+                        DAY {day.day} • {day.date}
+                    </div>
+                    <h2 className="text-2xl font-bold">{day.title}</h2>
                 </div>
             </div>
 
-            <div className="flex items-center gap-4 text-sm border-l border-indigo-200 pl-4">
-                <div className="flex flex-col">
-                    <span className="text-xs text-slate-500">Approx Cost</span>
-                    <span className="font-bold text-slate-900">₹{commute.cost}</span>
-                </div>
-                <div className="flex flex-col">
-                    <span className="text-xs text-slate-500">Travel Time</span>
-                    <span className="font-bold text-slate-900 flex items-center gap-1">
-                        <Clock size={12} /> {commute.duration}
-                    </span>
-                </div>
+            {/* Timeline Connector */}
+            <div className="border-l-2 border-indigo-100 ml-4 space-y-8 pl-8 pb-4">
+
+                {/* Morning */}
+                {day.morning.length > 0 && (
+                    <div className="relative">
+                        <div className="absolute -left-[39px] top-1 bg-amber-100 text-amber-600 p-1 rounded-full border-4 border-white shadow-sm z-10">
+                            <span className="text-xs font-bold block w-4 h-4 text-center leading-4">M</span>
+                        </div>
+                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">Morning</h3>
+                        <div className="space-y-3">
+                            {day.morning.map(act => (
+                                <ActivityCard key={act.id} activity={act} onRemove={(id) => onDeleteActivity(day.day, 'morning', id)} />
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Afternoon */}
+                {day.afternoon.length > 0 && (
+                    <div className="relative">
+                        <div className="absolute -left-[39px] top-1 bg-orange-100 text-orange-600 p-1 rounded-full border-4 border-white shadow-sm z-10">
+                            <span className="text-xs font-bold block w-4 h-4 text-center leading-4">A</span>
+                        </div>
+                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">Afternoon</h3>
+                        <div className="space-y-3">
+                            {day.afternoon.map(act => (
+                                <ActivityCard key={act.id} activity={act} onRemove={(id) => onDeleteActivity(day.day, 'afternoon', id)} />
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Evening */}
+                {day.evening.length > 0 && (
+                    <div className="relative">
+                        <div className="absolute -left-[39px] top-1 bg-indigo-100 text-indigo-600 p-1 rounded-full border-4 border-white shadow-sm z-10">
+                            <span className="text-xs font-bold block w-4 h-4 text-center leading-4">E</span>
+                        </div>
+                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">Evening</h3>
+                        <div className="space-y-3">
+                            {day.evening.map(act => (
+                                <ActivityCard key={act.id} activity={act} onRemove={(id) => onDeleteActivity(day.day, 'evening', id)} />
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Add Activity Button */}
+                <button className="flex items-center gap-2 text-sm font-medium text-brand-600 hover:text-brand-700 hover:bg-brand-50 px-4 py-2 rounded-lg transition-colors w-full border border-dashed border-brand-200 justify-center">
+                    <Plus size={16} /> Add Activity to Day {day.day}
+                </button>
             </div>
         </div>
     );
 };
 
+// --- Main Page Component ---
+
 const ItineraryBuilder = () => {
     const { parsedParams } = useTripStore();
-    const [duration, setDuration] = useState(parsedParams?.duration || 4);
-    const [selectedDay, setSelectedDay] = useState(1);
+    const [itinerary, setItinerary] = useState<DaySchedule[]>(MOCK_ITINERARY);
 
-    // Default group type from store or default to couple
-    const [groupType, setGroupType] = useState<GroupType>(parsedParams?.groupType || 'couple');
-
-    // Get personalized restaurants
-    const recommendedRestaurants = useMemo(() => {
-        return DiscoveryPersonalization.filterRestaurants(groupType, parsedParams?.preferences);
-    }, [groupType, parsedParams?.preferences]);
-
-    const personalizationTip = useMemo(() => DiscoveryPersonalization.getPersonalizedTips(groupType), [groupType]);
-
-    // Use Proximity Service to "group" or at least visualize proximity
-    // For this mock, we pretend the activities for Day 1 are "Proximity Group 1"
-    // Determine activities for the current day
-    const currentDayActivities = useMemo(() => {
-        if (selectedDay > 4) {
-            // Distribute unlockable activities across extra days if needed, 
-            // for now sticking to the fix of showing Nusa Penida for Day 5
-            return selectedDay === 5 ? [UNLOCKABLE_ACTIVITIES[0]] : [UNLOCKABLE_ACTIVITIES[1]];
-        }
-        return DAY_SCHEDULES[selectedDay] || DAY_SCHEDULES[1];
-    }, [selectedDay]);
-    const activityGroups = useMemo(() => ProximityService.groupActivitiesByProximity(currentDayActivities), [currentDayActivities]);
-
-    const handleGroupChange = (type: GroupType) => {
-        setGroupType(type);
+    const handleDeleteActivity = (dayNum: number, period: 'morning' | 'afternoon' | 'evening', actId: string) => {
+        setItinerary(prev => prev.map(day => {
+            if (day.day !== dayNum) return day;
+            return {
+                ...day,
+                [period]: day[period].filter(a => a.id !== actId)
+            };
+        }));
     };
 
     return (
-        <div className="container mx-auto max-w-6xl py-8 px-4">
-            {/* Header */}
-            <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-8 gap-6">
-                <div>
-                    <h1 className="text-3xl font-bold text-slate-900">Itinerary Planner</h1>
-                    <p className="text-slate-500">Customize your {duration}-day trip to Bali</p>
-                </div>
+        <div className="bg-slate-50 min-h-screen pb-12">
 
-                <div className="flex flex-wrap gap-4">
-                    {/* Group Type Selector */}
-                    <div className="bg-white p-1 rounded-xl shadow-sm border border-slate-200 flex items-center">
-                        {GROUP_TYPES.map(type => (
-                            <button
-                                key={type.id}
-                                onClick={() => handleGroupChange(type.id)}
-                                className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-all ${groupType === type.id
-                                    ? 'bg-indigo-50 text-indigo-700 shadow-sm ring-1 ring-indigo-200'
-                                    : 'text-slate-500 hover:bg-slate-50'
-                                    }`}
-                                title={type.label}
-                            >
-                                <type.icon size={16} />
-                                <span className="hidden sm:inline">{type.label}</span>
-                            </button>
-                        ))}
-                    </div>
-
-                    {/* Duration Comparator Toggle */}
-                    <div className="flex items-center bg-white rounded-xl shadow-sm border border-slate-200 p-1 relative">
-                        <button
-                            onClick={() => setDuration(4)}
-                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${duration === 4 ? 'bg-brand-600 text-white shadow-sm' : 'text-slate-500 hover:bg-slate-50'}`}
-                        >
-                            4 Days
+            {/* Page Header */}
+            <div className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm backdrop-blur-md bg-white/90">
+                <div className="container mx-auto max-w-6xl px-4 h-16 flex items-center justify-between">
+                    <h1 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <MapPin className="text-brand-600" />
+                        Trip to Bali, Indonesia
+                    </h1>
+                    <div className="flex items-center gap-4 text-sm text-slate-600">
+                        <span className="hidden sm:flex items-center gap-1"><Calendar size={14} /> 5 Days</span>
+                        <span className="hidden sm:flex items-center gap-1"><Users size={14} /> {parsedParams?.people || 2} Adults</span>
+                        <button className="bg-brand-600 text-white px-4 py-2 rounded-full font-medium shadow-md hover:bg-brand-700 transition-colors">
+                            Save Itinerary
                         </button>
-                        <button
-                            onClick={() => setDuration(6)}
-                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1 ${duration === 6 ? 'bg-brand-600 text-white shadow-sm' : 'text-slate-500 hover:bg-slate-50'}`}
-                        >
-                            6 Days
-                            <span className={`text-xs px-1.5 rounded-full font-bold ${duration === 6 ? 'bg-white text-brand-600' : 'bg-yellow-100 text-yellow-700'}`}>+2</span>
-                        </button>
-
-                        {/* Value Badge Tooltip */}
-                        {duration === 4 && (
-                            <motion.div
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="absolute -bottom-16 right-0 bg-slate-900 text-white p-3 rounded-lg shadow-xl text-xs w-64 z-20 pointer-events-none"
-                            >
-                                <div className="font-bold text-yellow-400 mb-1">✨ Best Value</div>
-                                For just ₹5,000 more, you unlock Nusa Penida & Ubud markets!
-                                <div className="absolute -top-1 right-10 w-2 h-2 bg-slate-900 rotate-45" />
-                            </motion.div>
-                        )}
                     </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Sidebar: Days & Stats */}
-                <div className="space-y-6 order-2 lg:order-1">
-                    <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
-                        <h3 className="font-semibold text-slate-900 mb-4 px-2">Trip Timeline</h3>
-                        <div className="flex lg:flex-col overflow-x-auto lg:overflow-visible gap-2 pb-2 lg:pb-0 scrollbar-hide">
-                            {Array.from({ length: duration }).map((_, i) => (
-                                <button
-                                    key={i}
-                                    onClick={() => setSelectedDay(i + 1)}
-                                    className={`shrink-0 flex items-center justify-between p-3 rounded-xl transition-all whitespace-nowrap lg:w-full ${selectedDay === i + 1
-                                        ? 'bg-brand-50 text-brand-700 border border-brand-200'
-                                        : 'text-slate-600 hover:bg-slate-50 border border-transparent custom-hover-border'
-                                        }`}
-                                >
-                                    <span className="font-medium">Day {i + 1}</span>
-                                    {i >= 4 ? (
-                                        <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-bold ml-2">Bonus</span>
-                                    ) : (
-                                        <ChevronRight size={16} className="hidden lg:block text-slate-300" />
-                                    )}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
+            <div className="container mx-auto max-w-6xl px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-                    {/* Unlockable Content Notice */}
-                    <AnimatePresence>
-                        {duration === 4 && (
-                            <motion.div
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: 'auto' }}
-                                exit={{ opacity: 0, height: 0 }}
-                                className="bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 p-5 rounded-2xl relative overflow-hidden"
-                            >
-                                <div className="relative z-10">
-                                    <h4 className="font-bold text-indigo-900 mb-2 flex items-center gap-2">
-                                        <span className="text-xl">🔓</span> Extend to 6 Days?
-                                    </h4>
-                                    <p className="text-sm text-indigo-700 mb-4">Reduce travel fatigue and visit:</p>
-                                    <div className="space-y-3">
-                                        {UNLOCKABLE_ACTIVITIES.map(u => (
-                                            <div key={u.id} className="flex items-center gap-3 bg-white/60 p-2 rounded-lg shadow-sm">
-                                                <img src={u.image} alt="" className="w-10 h-10 rounded-md object-cover" />
-                                                <span className="text-sm font-medium text-indigo-900">{u.name}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                    <button
-                                        onClick={() => setDuration(6)}
-                                        className="mt-4 w-full py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200"
-                                    >
-                                        Unlock for ₹5,000
-                                    </button>
-                                </div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                {/* Main Itinerary Content */}
+                <div className="lg:col-span-8">
+                    {itinerary.map((day) => (
+                        <DaySection
+                            key={day.day}
+                            day={day}
+                            onDeleteActivity={handleDeleteActivity}
+                        />
+                    ))}
                 </div>
 
-                {/* Main Timeline View */}
-                <div className="lg:col-span-2 space-y-8 order-1 lg:order-2">
-                    {/* Itinerary Activities */}
-                    <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 min-h-[400px]">
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-xl font-bold flex items-center gap-2">
-                                <Calendar size={20} className="text-brand-600" />
-                                Day {selectedDay} Itinerary
-                            </h2>
-                            {personalizationTip && (
-                                <span className="text-xs font-medium text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100 hidden sm:block">
-                                    {personalizationTip}
-                                </span>
-                            )}
+                {/* Sidebar Stats */}
+                <div className="lg:col-span-4 space-y-6">
+                    <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 sticky top-24">
+                        <h3 className="font-bold text-slate-900 mb-4 text-lg">Trip Summary</h3>
+
+                        <div className="space-y-4">
+                            <div className="flex justify-between items-center py-2 border-b border-slate-50">
+                                <span className="text-slate-500 text-sm">Destinations</span>
+                                <span className="font-medium text-slate-900">12 Locations</span>
+                            </div>
+                            <div className="flex justify-between items-center py-2 border-b border-slate-50">
+                                <span className="text-slate-500 text-sm">Est. Duration</span>
+                                <span className="font-medium text-slate-900">5 Days</span>
+                            </div>
+                            <div className="flex justify-between items-center py-2 border-b border-slate-50">
+                                <span className="text-slate-500 text-sm">Travelers</span>
+                                <span className="font-medium text-slate-900">{parsedParams?.people || 2} Adults</span>
+                            </div>
                         </div>
 
-                        <div className="relative border-l-2 border-slate-100 pl-8 space-y-8 ml-4">
-                            {/* Inject mock extra activities for days 5 & 6 */}
-                            {/* Render Activities Grouped */}
-                            {activityGroups.map((group, groupIdx) => (
-                                <div key={groupIdx} className="mb-4 relative">
-                                    {group.length > 1 && (
-                                        <div className="absolute -left-4 top-0 bottom-0 w-1 bg-indigo-100 rounded-full" />
-                                    )}
-                                    {group.map((act: any, idx) => (
-                                        <motion.div
-                                            key={act.id}
-                                            initial={{ opacity: 0, x: -10 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            transition={{ delay: idx * 0.1 }}
-                                            className="relative group cursor-pointer mb-4 last:mb-0"
-                                        >
-                                            {/* Timeline dot */}
-                                            <div className={`absolute -left-[41px] top-2 w-5 h-5 bg-white border-2 rounded-full z-10 transition-colors ${selectedDay > 4 ? 'border-yellow-400 group-hover:bg-yellow-400' : 'border-brand-400 group-hover:bg-brand-400'}`} />
-
-                                            <div className={`rounded-xl border transition-all overflow-hidden ${selectedDay > 4 ? 'bg-yellow-50 border-yellow-200' : 'bg-slate-50 border-slate-200 hover:border-brand-200 hover:shadow-md'}`}>
-                                                {/* Image Header if available */}
-                                                {act.image && (
-                                                    <div className="h-40 w-full relative">
-                                                        <img src={act.image} alt={act.name} className="w-full h-full object-cover" />
-                                                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                                                        <span className="absolute bottom-2 left-4 text-white font-bold text-lg text-shadow-sm">{act.name}</span>
-                                                    </div>
-                                                )}
-
-                                                <div className="p-4">
-                                                    {!act.image && (
-                                                        <h3 className="text-lg font-bold text-slate-900 mb-2">{act.name}</h3>
-                                                    )}
-
-                                                    <div className="flex justify-between items-start mb-2">
-                                                        <span className="text-sm font-bold text-slate-500 bg-white px-2 py-1 rounded-md shadow-sm border border-slate-100">
-                                                            {idx === 0 ? '10:00 AM' : '01:00 PM'}
-                                                        </span>
-                                                        <span className="text-xs font-medium text-slate-400 flex items-center gap-1">
-                                                            <Clock size={12} /> {act.duration}h
-                                                        </span>
-                                                    </div>
-
-                                                    {act.description && (
-                                                        <p className="text-sm text-slate-600 mb-3">{act.description}</p>
-                                                    )}
-
-                                                    <div className="flex items-center gap-2 mt-2">
-                                                        <span className={`px-2 py-0.5 rounded text-xs font-medium capitalize 
-                                     ${act.category === 'food' ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700'}
-                                   `}>
-                                                            {act.category}
-                                                        </span>
-                                                        {group.length > 1 && (
-                                                            <span className="flex items-center gap-1 text-[10px] bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded border border-indigo-100">
-                                                                <MapPin size={10} /> Near {group[0].id === act.id ? 'next stop' : group[0].name.split(' ').slice(0, 2).join(' ')}
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </motion.div>
-                                    ))}
+                        <div className="mt-6 bg-indigo-50 rounded-xl p-4 border border-indigo-100">
+                            <div className="flex items-start gap-3">
+                                <div className="p-2 bg-white rounded-lg text-indigo-600 shadow-sm">
+                                    <Wallet size={20} />
                                 </div>
-                            ))}
-
-                            {selectedDay <= 4 && (
-                                <div className="relative">
-                                    <div className="absolute -left-[41px] top-2 w-5 h-5 bg-white border-2 border-slate-300 rounded-full" />
-                                    <button className="w-full py-4 border-2 border-dashed border-slate-300 rounded-xl text-slate-400 hover:text-brand-600 hover:border-brand-300 hover:bg-brand-50 transition-all flex items-center justify-center gap-2 font-medium">
-                                        <Plus size={20} />
-                                        Add Activity
-                                    </button>
+                                <div>
+                                    <p className="text-xs text-indigo-500 font-bold uppercase tracking-wider mb-1">Budget Remaining</p>
+                                    <p className="text-xl font-bold text-indigo-900">₹1,45,000</p>
+                                    <p className="text-xs text-indigo-400 mt-1">out of ₹2,00,000 total</p>
                                 </div>
-                            )}
+                            </div>
                         </div>
 
-                        {/* Commute Guide Component */}
-                        <CommuteGuide activityCount={currentDayActivities.length} />
+                        <button className="w-full mt-6 py-3 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition-colors flex items-center justify-center gap-2">
+                            <Plus size={18} /> Add More Activities
+                        </button>
                     </div>
-
-                    {/* Local Food Section */}
-                    <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
-                        <div className="flex items-center justify-between mb-4">
-                            <h2 className="text-xl font-bold flex items-center gap-2 text-slate-900">
-                                <Utensils size={20} className="text-orange-500" />
-                                Local Food & Dining
-                            </h2>
-                            <span className="text-xs text-slate-400 font-medium bg-slate-50 px-2 py-1 rounded-full">
-                                Curated for: <span className="capitalize text-slate-600">{groupType}</span>
-                            </span>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {recommendedRestaurants.map((restaurant, idx) => (
-                                <motion.div
-                                    key={restaurant.id}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.2 + idx * 0.1 }}
-                                    className="border border-slate-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow group"
-                                >
-                                    <div className="h-32 bg-slate-200 relative overflow-hidden">
-                                        <img src={restaurant.image} alt={restaurant.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                                        <div className="absolute top-2 right-2 flex gap-1 flex-wrap justify-end">
-                                            {restaurant.tags.includes('iconic') && (
-                                                <span className="text-[10px] font-bold bg-yellow-400 text-yellow-900 px-2 py-0.5 rounded-full shadow-sm">
-                                                    Iconic
-                                                </span>
-                                            )}
-                                            {restaurant.tags.includes('vegetarian') && (
-                                                <span className="text-[10px] font-bold bg-green-500 text-white px-2 py-0.5 rounded-full shadow-sm">
-                                                    Veg
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div className="p-3">
-                                        <div className="flex justify-between items-start mb-1">
-                                            <h3 className="font-bold text-slate-900 text-sm line-clamp-1">{restaurant.name}</h3>
-                                            <span className="text-xs font-bold text-orange-600 flex items-center gap-0.5">
-                                                ★ {restaurant.rating}
-                                            </span>
-                                        </div>
-                                        <p className="text-xs text-slate-500 mb-2">{restaurant.cuisine} • {restaurant.priceLevel}</p>
-                                        <div className="flex flex-wrap gap-1">
-                                            {restaurant.tags.slice(0, 3).map(tag => (
-                                                <span key={tag} className="text-[10px] bg-slate-50 text-slate-500 px-1.5 py-0.5 rounded border border-slate-100">
-                                                    #{tag}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Cultural Events & Volunteering */}
-                    <CulturalDiscovery locationId="bali" />
                 </div>
             </div>
         </div>

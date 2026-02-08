@@ -170,5 +170,163 @@ export const mockApi = {
                 impactScore: 8
             }
         ];
+    },
+
+    getFlights: async (_destination: string) => {
+        await new Promise(resolve => setTimeout(resolve, 600));
+        return [
+            {
+                id: 'fl_1',
+                airline: 'Air India',
+                flightNumber: 'AI-335',
+                from: 'DEL',
+                to: 'DPS',
+                departure: '06:30 AM',
+                arrival: '02:45 PM',
+                duration: '6h 15m',
+                stops: 'Non-stop',
+                price: 32000,
+                rating: 4.2,
+                image: 'https://upload.wikimedia.org/wikipedia/en/thumb/4/46/Air_India_Logo.svg/1200px-Air_India_Logo.svg.png'
+            },
+            {
+                id: 'fl_2',
+                airline: 'Singapore Airlines',
+                flightNumber: 'SQ-421',
+                from: 'DEL',
+                to: 'DPS',
+                departure: '09:15 AM',
+                arrival: '05:30 PM',
+                duration: '6h 45m',
+                stops: '1 Stop (SIN)',
+                price: 35500,
+                rating: 4.8,
+                image: 'https://upload.wikimedia.org/wikipedia/en/thumb/6/6b/Singapore_Airlines_Logo_2.svg/1200px-Singapore_Airlines_Logo_2.svg.png'
+            },
+            {
+                id: 'fl_3',
+                airline: 'IndiGo',
+                flightNumber: '6E-101',
+                from: 'DEL',
+                to: 'DPS',
+                departure: '11:00 PM',
+                arrival: '08:00 AM',
+                duration: '7h 30m',
+                stops: '1 Stop (BKK)',
+                price: 24500,
+                rating: 4.0,
+                image: 'https://upload.wikimedia.org/wikipedia/en/thumb/c/c5/IndiGo_Airlines_logo.svg/1200px-IndiGo_Airlines_logo.svg.png'
+            },
+            {
+                id: 'fl_4',
+                airline: 'Garuda Indonesia',
+                flightNumber: 'GA-880',
+                from: 'DEL',
+                to: 'DPS',
+                departure: '10:45 AM',
+                arrival: '06:20 PM',
+                duration: '6h 05m',
+                stops: 'Non-stop',
+                price: 38000,
+                rating: 4.6,
+                image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Garuda_Indonesia_Logo.svg/2560px-Garuda_Indonesia_Logo.svg.png'
+            }
+        ];
+    },
+
+    getHotels: async (_destination: string) => {
+        await new Promise(resolve => setTimeout(resolve, 700));
+        return [
+            {
+                id: 'ht_1',
+                name: 'Padma Resort Ubud',
+                location: 'Ubud, Bali',
+                type: 'Luxury Resort',
+                rating: 4.9,
+                reviews: 234,
+                price: 12000,
+                image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80',
+                amenities: ['Pool', 'Spa', 'Free WiFi', 'Breakfast']
+            },
+            {
+                id: 'ht_2',
+                name: 'The Kayon Jungle Resort',
+                location: 'Ubud, Bali',
+                type: 'Luxury Villa',
+                rating: 4.8,
+                reviews: 189,
+                price: 18500,
+                image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80',
+                amenities: ['Infinity Pool', 'Yoga Deck', 'Bar']
+            },
+            {
+                id: 'ht_3',
+                name: 'Ayana Resort and Spa',
+                location: 'Jimbaran, Bali',
+                type: 'Beach Resort',
+                rating: 4.7,
+                reviews: 412,
+                price: 15000,
+                image: 'https://images.unsplash.com/photo-1571896349842-6e53ce41ad03?auto=format&fit=crop&w=800&q=80',
+                amenities: ['Private Beach', 'Rock Bar', 'Spa']
+            },
+            {
+                id: 'ht_4',
+                name: 'Potato Head Suites',
+                location: 'Seminyak, Bali',
+                type: 'Boutique Hotel',
+                rating: 4.6,
+                reviews: 320,
+                price: 9500,
+                image: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80',
+                amenities: ['Beach Club', 'Gym', 'Art Gallery']
+            }
+        ];
+    },
+
+    getRestaurants: async (_destination: string) => {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return [
+            {
+                id: 'rs_1',
+                name: 'Locavore',
+                cuisine: 'Modern European',
+                image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=800&q=80',
+                rating: 4.9,
+                priceLevel: '₹₹₹',
+                type: 'Non-Veg',
+                mustTry: 'Into The Wild Menu'
+            },
+            {
+                id: 'rs_2',
+                name: 'Warung Babi Guling Ibu Oka',
+                cuisine: 'Indonesian',
+                image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80',
+                rating: 4.7,
+                priceLevel: '₹',
+                type: 'Non-Veg',
+                mustTry: 'Suckling Pig'
+            },
+            {
+                id: 'rs_3',
+                name: 'Kubu at Mandapa',
+                cuisine: 'Mediterranean',
+                image: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=800&q=80',
+                rating: 4.8,
+                priceLevel: '₹₹₹₹',
+                type: 'Veg/Non-Veg',
+                mustTry: 'River Prawns'
+            },
+            {
+                id: 'rs_4',
+                name: 'Kynd Community',
+                cuisine: 'Vegan Cafe',
+                image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80',
+                rating: 4.6,
+                priceLevel: '₹₹',
+                type: 'Veg',
+                mustTry: 'Acai Bowls'
+            }
+        ];
     }
 };

@@ -26,8 +26,8 @@ export const ExperienceCard = ({ title, image, isSelected = false, onClick }: Ex
             <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity ${isSelected ? 'opacity-90' : 'opacity-70 group-hover:opacity-80'
                 }`} />
 
-            <div className="absolute bottom-0 left-0 p-6 text-left">
-                <h3 className="text-white text-xl font-bold tracking-wide">{title}</h3>
+            <div className="absolute bottom-0 left-0 p-4 md:p-6 text-left">
+                <h3 className="text-white text-lg md:text-xl font-bold tracking-wide">{title}</h3>
                 {isSelected && (
                     <motion.div
                         layoutId="active-indicator"
