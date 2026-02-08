@@ -1,5 +1,6 @@
 # Experio
-<!-- Last deployed: 2026-02-06 23:20 --> 🌍✈️
+<!-- Last deployed: 2026-02-08 -->
+[🚀 Live Demo](https://travel-i37871nkf-nmnroys-projects.vercel.app/) 🌍✈️
 
 A modern, AI-powered travel booking platform built with **React**, **TypeScript**, and **Tailwind CSS**. 
 
