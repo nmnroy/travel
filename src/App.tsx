@@ -8,7 +8,7 @@ import ItineraryBuilder from './pages/ItineraryBuilder';
 
 function App() {
   return (
-    <Router>
+    <Router basename="/travel">
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
