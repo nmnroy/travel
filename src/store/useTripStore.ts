@@ -89,7 +89,7 @@ export const useTripStore = create<TripStore>((set) => ({
 
     currentTrip: JSON.parse(localStorage.getItem('experio_current_trip') || JSON.stringify({
         duration: 3,
-        travelers: { adults: 2, children: 0 },
+        travelers: { adults: 2, children: 0, infants: 0 },
         activities: [],
         totalPrice: 0,
     })),

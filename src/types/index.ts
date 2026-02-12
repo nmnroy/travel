@@ -63,6 +63,7 @@ export interface TripDraft {
     travelers: {
         adults: number;
         children: number;
+        infants: number;
     };
     budget?: number;
     // Selected Items for Unified Checkout

@@ -5,6 +5,7 @@ import { Check } from 'lucide-react';
 import { TravelerDetailsForm } from '../components/booking/TravelerDetailsForm';
 import { PaymentForm } from '../components/booking/PaymentForm';
 import { BookingConfirmation } from '../components/booking/BookingConfirmation';
+import { TripHeader } from '../components/booking/TripHeader';
 import { useTripStore } from '../store/useTripStore';
 
 const STEPS = [
@@ -129,14 +130,7 @@ const BookingFlow = () => {
                             {step === 0 && (
                                 <div className="space-y-6">
                                     <h2 className="text-2xl font-bold">Customize Your Itinerary</h2>
-                                    <div className="bg-blue-50 p-6 rounded-xl border border-blue-100">
-                                        <h3 className="font-semibold text-blue-900 text-lg mb-2">Trip to {currentTrip.destination?.name || 'Bali'}</h3>
-                                        <p className="text-blue-700 text-sm flex items-center gap-2">
-                                            <span>📅 {currentTrip.duration} Days</span>
-                                            <span>•</span>
-                                            <span>👥 {currentTrip.travelers.adults} Adults</span>
-                                        </p>
-                                    </div>
+                                    <TripHeader />
                                     {/* Placeholder for Itinerary Customization */}
                                     <div className="border-2 border-dashed border-slate-200 rounded-xl p-8 text-center text-slate-400">
                                         <p>Drag and drop activities, or AI recommendations would appear here.</p>
