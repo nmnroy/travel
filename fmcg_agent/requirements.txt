@@ -1,0 +1,12 @@
+streamlit
+google-generativeai
+chromadb
+sentence-transformers
+PyPDF2
+python-dotenv
+pandas
+numpy
+plotly
+langchain-core
+langchain
+reportlab
